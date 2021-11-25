@@ -16,7 +16,7 @@ class FileSystemDatabase(DatabaseInterface):
     def create(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         """creates data"""
 
-        print(f"Creating {location} file name")
+        print(f"Creating {location} file")
         try:
             with open(f"{location}.json", "w") as file:
                 json.dump(data, file)
