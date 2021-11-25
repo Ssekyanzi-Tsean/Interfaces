@@ -79,3 +79,8 @@ class FileSystemDatabase(DatabaseInterface):
             reason = "File not found"
             print(reason)
             return (False, reason)
+
+    def tearDownSystem(self) -> None:
+        print("Shutting down system")
+        self.db.disconnect()
+        print("System shut down complete")
