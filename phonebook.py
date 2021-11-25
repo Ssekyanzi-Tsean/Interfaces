@@ -1,4 +1,5 @@
 from dbi import DatabaseInterface
+from typing import Dict, Tuple
 
 
 class PhoneBookSystem:
@@ -12,3 +13,8 @@ class PhoneBookSystem:
         print("Starting up system")
         self.db.connect()
         print("System startup complete")
+
+    def create_contact(self, data: dict) -> Tuple[bool, str]:
+        print("Creating contact")
+
+        phone = data["phone"]
