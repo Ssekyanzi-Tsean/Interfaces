@@ -15,4 +15,4 @@ name2 = "Micheal"
 
 phonebook_system.create_contact({"name": name, "phone": phone})
 phonebook_system.update_contact({name: name2, "phone": phone})
-phonebook_system.rea
+phonebook_system.read_contact({name: name2, "phone": phone})

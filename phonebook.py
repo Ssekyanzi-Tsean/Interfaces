@@ -21,6 +21,7 @@ class PhoneBookSystem:
 
         created, reason = self.db.create(phone, data)
         if not created:
+            reason = "failed to create contact"
             print(reason)
             return False, reason
 
