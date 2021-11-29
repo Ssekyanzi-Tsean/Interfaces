@@ -2,10 +2,12 @@ import pytest
 from phonebook import PhoneBookSystem
 from filesystem import FileSystemDatabase
 from unittest.mock import MagicMock
+from inmemory import InmemoryDatabase
 
 
 class TestPhoneBookSystem:
     database_handle = FileSystemDatabase()
+    database_handle = InmemoryDatabase()
     phonebook_system = PhoneBookSystem(database_handle)
 
     def test_database_provider(self):
@@ -66,10 +68,11 @@ class TestPhoneBookSystem:
 
     def test_fail_update_contact(self):
         name = "Elsie"
+        name2 = "Eddie"
         phone = "0788901797"
         phone2 = "0701901797"
         data = {"name": name, "phone": phone}
-        data2 = {"name": name, "phone": phone2}
+        data2 = {"name": name2, "phone": phone2}
         self.phonebook_system.create_contact(data)
         output = self.phonebook_system.update_contact(data2)
         reason = 'failed to update contact'

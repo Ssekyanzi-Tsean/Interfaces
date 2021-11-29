@@ -69,3 +69,16 @@ class InmemoryDatabase():
             print(reason)
             print(self.data)
             return True, reason
+
+    def delete(self, location: str) -> Tuple[bool, str]:
+        print(f"Deleting data in {location} location")
+        try:
+            self.data.pop(location)
+            print(self.data)
+            reason = f"Data deleted successfully in {location} location "
+            return True, reason
+        except Exception as k:
+            reason = (f"-Failed to delete data in {location} location, reason: "
+                      + f"{type(k).__name__} {str(k)}")
+            print(reason)
+            return False, reason
