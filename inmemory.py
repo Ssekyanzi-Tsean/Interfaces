@@ -49,7 +49,7 @@ class InmemoryDatabase():
             reason = (
                 f"Failed to read data in location {location}, reason: " + f"{type(k).__name__} {str(k)}")
             print(reason)
-            return (False, reason, "")
+            return False, reason, ""
 
     def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         print(f"Updating data in {location} location")

@@ -4,12 +4,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Integer, String
 
 Base = declarative_base()
+engine = create_engine('sqlite:///storage.db', echo=True)
 
 
 class SqlDb(Base):
-    engine = create_engine('sqlite:///storage.db', echo=True)
-    Session = sessionmaker(bind=engine)
-    session = Session()
+
     print("Creating Database")
 
     __tablename__ = 'data'
@@ -18,3 +17,10 @@ class SqlDb(Base):
     data = Column(String)
 
     print(f" using {__tablename__} Table ")
+
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+
+Base.metadata.create_all(engine)
