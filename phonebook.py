@@ -16,18 +16,18 @@ class PhoneBookSystem:
 
     def create_contact(self, data: dict) -> Tuple[bool, str]:
         print("Creating contact")
+        try:
+            phone = data["phone"]
 
-        phone = data["phone"]
-
-        created, reason = self.db.create(phone, data)
-        if not created:
-            reason = "failed to create contact"
-            print(reason)
+            created, reason = self.db.create(phone, data)
+            if not created:
+                reason = "failed to create contact"
+                print(reason)
             return False, reason
-
-        reason = "Contact created Succesfully "
-        print(reason)
-        return True, reason
+        except Exception:
+            reason = "Contact created Succesfully "
+            print(reason)
+            return True, reason
 
     def read_contact(self, data: dict) -> Tuple[bool, str, Dict[str, str]]:
         print("Viewing contact information")
@@ -35,8 +35,8 @@ class PhoneBookSystem:
 
         read, reason, output = self.db.read(phone)
         if not read:
-            print(reason)
             reason = "failed to read contact"
+            print(reason)
             return False, reason, ""
 
         reason = "Contact read successfully"

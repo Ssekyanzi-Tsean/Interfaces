@@ -3,11 +3,12 @@ from typing import Dict, Tuple
 from sqldb import SqlDb
 import json
 from sqlalchemy.sql import text
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, engine
 
 
 class SqlDatabase(DatabaseInterface):
     """Uses sql alchemy"""
+    engine = create_engine('sqlite:///storage.db', echo=True)
 
     def connect(self):
         print("-connecting to sql database")
@@ -36,14 +37,7 @@ class SqlDatabase(DatabaseInterface):
     def read(self, location: str) -> Tuple[bool, str, Dict[str, str]]:
         """Reads in data in system"""
         print(f"-Reading data in {location} location")
-        engine = create_engine('sqlite:///storage.db', echo=True)
-
-        # conn = engine.connect()
-
-        # express = text(
-        #     f"SELECT data.location, data.data from data where data.location == {location}")
-        # result = conn.execute(express)
-        with engine.connect() as connection:
+        with self.engine.connect() as connection:
             result = connection.execute(text("select data from data"))
             for row in result:
                 answer = f"location:{location} ", row['data']
@@ -59,3 +53,25 @@ class SqlDatabase(DatabaseInterface):
                 f"Failed to read data in location {location}, reason: " + f"{type(k).__name__} {str(k)}")
             print(reason)
             return False, reason, ""
+
+    def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
+        print(f"Updating data in {location} location")
+        try:
+            # x = SqlDb.session.query(location).get(data)
+            # print("From: ", x.data)
+            # x.data = data
+            # print("To: ", x.data)
+            # SqlDb.session.commit()
+            with self.engine.connect() as connection:
+
+                result = connection.execute(
+                    text(f"update data SET data = :data where data.location = {location}"))
+            reason = f"-Data updated successful in location :{location}"
+            return True, reason
+        except Exception as e:
+            reason = (
+                f"-Failed to update data in location {location}, reason: "
+                + f"{type(e).__name__} {str(e)}"
+            )
+            print(reason)
+            return (False, reason)

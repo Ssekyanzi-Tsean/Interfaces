@@ -2,49 +2,44 @@ from dbi import DatabaseInterface
 from typing import Dict, Tuple
 
 
-class InmemoryDatabase():
+class InmemoryDatabase(DatabaseInterface):
     def __init__(self) -> None:
-        super(). __init__()
         self.data = {}
-        __instance = None
-
-    @staticmethod
-    def check_instance():
-        if InmemoryDatabase.__instance is None:
-            return InmemoryDatabase()
-        return InmemoryDatabase.__instance
 
     def connect(self):
-        print("-connecting to inmemory database")
-        return True
+        reason = "-connecting to inmemory database"
+        print(reason)
+        return True, reason
 
     def disconnect(self):
-        print("-Disconnecting from Inmemory Database")
-        return True
+        reason = "-Disconnecting from Inmemory Database"
+        print(reason)
+        return True, reason
 
     def create(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         print(f"Creating data in {location} location")
         try:
-            print(self.data[location])
-            reason = "failed to create data in location"
-            print(reason)
-            return False, reason
-        except Exception:
             self.data[location] = data
-            print(self.data)
-            reason = f"Data created successfully in {location} location"
+            reason = f"Data created in {location} location"
             print(reason)
             return True, reason
 
+        except Exception as e:
+            reason = (
+                f"Failed to create data in location {location}, reason: " + f"{type(e).__name__} {str(e)}")
+            print(reason)
+            return(False, reason)
+
     def read(self, location: str) -> Tuple[bool, str, Dict[str, str]]:
         print(f"Viewing data in {location} location")
-        print(self.data)
         try:
-            print(self.data[location]["phone"])
+            output = self.data[location]
+
+            print(output)
             reason = f"Data viewed successfully in {location} location"
             print(reason)
             print(self.data)
-            return True, reason, self.data
+            return True, reason, output
         except Exception as k:
             reason = (
                 f"Failed to read data in location {location}, reason: " + f"{type(k).__name__} {str(k)}")
@@ -53,12 +48,9 @@ class InmemoryDatabase():
 
     def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         print(f"Updating data in {location} location")
-        print(self.data)
-
         try:
-            print(self.data[location]["phone"])
             self.data[location] = data
-            print(self.data)
+
             reason = f"Data updated successfully in {location} location"
             print(reason)
             print(self.data)
@@ -73,8 +65,7 @@ class InmemoryDatabase():
     def delete(self, location: str) -> Tuple[bool, str]:
         print(f"Deleting data in {location} location")
         try:
-            self.data.pop(location)
-            print(self.data)
+            del self.data[location]
             reason = f"Data deleted successfully in {location} location "
             return True, reason
         except Exception as k:
