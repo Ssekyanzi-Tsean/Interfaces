@@ -1,3 +1,4 @@
+from sqlalchemy.sql.expression import select
 from dbi import DatabaseInterface
 from typing import Dict, Tuple
 from sqldb import SqlDb
@@ -11,11 +12,14 @@ class SqlDatabase(DatabaseInterface):
     engine = create_engine('sqlite:///storage.db', echo=True)
 
     def connect(self):
-        print("-connecting to sql database")
+        reason = "-connecting to sql database"
         SqlDb()
+        print("Table Creation Complete")
+        return True, reason
 
     def disconnect(self):
-        print("-Disconnecting from sql database")
+        reason = "-Disconnecting from sql database"
+        return True, reason
 
     def create(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         """creates data """
@@ -37,17 +41,17 @@ class SqlDatabase(DatabaseInterface):
     def read(self, location: str) -> Tuple[bool, str, Dict[str, str]]:
         """Reads in data in system"""
         print(f"-Reading data in {location} location")
-        with self.engine.connect() as connection:
-            result = connection.execute(text("select data from data"))
-            for row in result:
-                answer = f"location:{location} ", row['data']
-
+        row = []
         try:
+            select = text(
+                """SELECT location,data FROM Information WHERE location = :loc""")
+            with self.engine.begin() as conn:
+                for row in conn.execute(select, {"loc": location}):
+                    print(row)
 
-            print(answer)
-            reason = f"Data viewed successfully"
-            print(reason)
-            return True, reason, answer
+                reason = f"Data viewed successfully"
+                print(reason)
+                return True, reason, row
         except Exception as k:
             reason = (
                 f"Failed to read data in location {location}, reason: " + f"{type(k).__name__} {str(k)}")
@@ -57,11 +61,6 @@ class SqlDatabase(DatabaseInterface):
     def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         print(f"Updating data in {location} location")
         try:
-            # x = SqlDb.session.query(location).get(data)
-            # print("From: ", x.data)
-            # x.data = data
-            # print("To: ", x.data)
-            # SqlDb.session.commit()
             with self.engine.connect() as connection:
 
                 result = connection.execute(

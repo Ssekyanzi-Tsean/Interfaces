@@ -8,10 +8,12 @@ class FileSystemDatabase(DatabaseInterface):
     """Uses the FileSystem as a Store"""
 
     def connect(self):
-        print("-Connecting to file system")
+        reason = "-Connecting to file system"
+        return True, reason
 
     def disconnect(self):
-        print("-Disconnecting from file system")
+        reason = "-Disconnecting from file system"
+        return True, reason
 
     def create(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         """creates data"""
@@ -32,22 +34,20 @@ class FileSystemDatabase(DatabaseInterface):
     def read(self, location: str) -> Tuple[bool, str, Dict[str, str]]:
         """reads data from sytem"""
         print(f"-Reading data in location {location}")
-        results = {}
-        path = f"{location}.json"
 
         try:
-            with open(path) as file_obj:
+            with open(f"{location}.json", "r") as file_obj:
                 in_data = json.load(file_obj)
-                results["output"] = file_obj
+                print(in_data)
                 reason = "Returned successfully"
                 print(reason)
-                return(True, reason, results)
+                return(True, reason, in_data)
 
         except Exception:
             reason = "No results found"
-            results["output"] = ""
+            in_data = ""
             print(reason)
-            return(False, reason, results)
+            return(False, reason, in_data)
 
     def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         """update method"""

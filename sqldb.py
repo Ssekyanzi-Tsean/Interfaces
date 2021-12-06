@@ -11,7 +11,7 @@ class SqlDb(Base):
 
     print("Creating Database")
 
-    __tablename__ = 'data'
+    __tablename__ = 'Information'
 
     location = Column(String, primary_key=True)
     data = Column(String)
@@ -23,5 +23,4 @@ class SqlDb(Base):
     session = Session()
 
 
-if __name__ == "__main__":
-    Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
