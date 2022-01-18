@@ -16,13 +16,13 @@ class DatabaseInterface(ABC):
     def create(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         """Create method chooses where the data will be saved and inserts the data"""
 
-    # @abstractmethod
-    # def read(self, location: str) -> Tuple[bool, str, Dict[str, str]]:
-    #     """Read method chooses the location from which to read data"""
+    @abstractmethod
+    def read(self, location: str) -> Tuple[bool, str, Dict[str, str]]:
+        """Read method chooses the location from which to read data"""
 
-    # @abstractmethod
-    # def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
-    #     """Update chooses a location and a set of data to update"""
+    @abstractmethod
+    def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
+        """Update chooses a location and a set of data to update"""
 
     # @abstractmethod
     # def delete(self, location: str) -> Tuple[bool, str]:

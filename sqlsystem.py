@@ -1,19 +1,27 @@
+
+from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import select
 from dbi import DatabaseInterface
 from typing import Dict, Tuple
 from sqldb import SqlDb
 import json
 from sqlalchemy.sql import text
-from sqlalchemy import create_engine, engine
+from sqlalchemy import create_engine, engine, update
+from sqlalchemy.orm import sessionmaker
 
 
 class SqlDatabase(DatabaseInterface):
     """Uses sql alchemy"""
-    engine = create_engine('sqlite:///storage.db', echo=True)
+    engine = None
+    session = None
 
     def connect(self):
         reason = "-connecting to sql database"
-        SqlDb()
+        # SqlDb()
+        engine = create_engine('sqlite:///storage.db', echo=True)
+        Session = sessionmaker(bind=engine)
+        self.session = Session()
+
         print("Table Creation Complete")
         return True, reason
 
@@ -27,8 +35,8 @@ class SqlDatabase(DatabaseInterface):
         try:
             data_string = json.dumps(data)
             handle = SqlDb(location=location, data=data_string)
-            SqlDb.session.add(handle)
-            SqlDb.session.commit()
+            self.session.add(handle)
+            self.session.commit()
             reason = f"-Data created successfully in {location} location"
             print(reason)
             return (True, reason)
@@ -43,15 +51,14 @@ class SqlDatabase(DatabaseInterface):
         print(f"-Reading data in {location} location")
         row = []
         try:
-            select = text(
-                """SELECT location,data FROM Information WHERE location = :loc""")
-            with self.engine.begin() as conn:
-                for row in conn.execute(select, {"loc": location}):
-                    print(row)
 
-                reason = f"Data viewed successfully"
-                print(reason)
-                return True, reason, row
+            result = self.session.query(SqlDb).filter(
+                SqlDb.location == location).first()
+            result_object = json.loads(result.data)
+
+            reason = f"Data viewed successfully"
+            print(reason)
+            return True, reason, result_object
         except Exception as k:
             reason = (
                 f"Failed to read data in location {location}, reason: " + f"{type(k).__name__} {str(k)}")
@@ -61,16 +68,40 @@ class SqlDatabase(DatabaseInterface):
     def update(self, location: str, data: Dict[str, str]) -> Tuple[bool, str]:
         print(f"Updating data in {location} location")
         try:
-            with self.engine.connect() as connection:
 
-                result = connection.execute(
-                    text(f"update data SET data = :data where data.location = {location}"))
+            updater = self.session.query(SqlDb).get(location)
+            print("Accesing "f"{location}")
+            json_loader = json.dumps(data)
+            updater.data = json_loader
+            self.session.commit()
             reason = f"-Data updated successful in location :{location}"
+            print(reason)
             return True, reason
+
         except Exception as e:
             reason = (
                 f"-Failed to update data in location {location}, reason: "
                 + f"{type(e).__name__} {str(e)}"
             )
             print(reason)
-            return (False, reason)
+            return False, reason
+
+    def delete(self, location: str) -> Tuple[bool, str]:
+        print(f"Deleting Contact in location {location}")
+        try:
+            result = self.session.query(SqlDb).filter(
+                SqlDb.location == location).first()
+            result_object = json.loads(result.data)
+
+            self.session.delete(result)
+            self.session.commit()
+            reason = f"Data Deleted Successfully"
+            print(reason)
+            return True, reason
+        except Exception as e:
+            reason = (
+                f"-Failed to Delete data in location {location}, reason: "
+                + f"{type(e).__name__} {str(e)}"
+            )
+            print(reason)
+            return False, reason
