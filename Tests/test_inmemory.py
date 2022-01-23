@@ -1,5 +1,5 @@
 import pytest
-from inmemory import InmemoryDatabase
+from app.inmemory import InmemoryDatabase
 
 
 class TestInmemoryDatabase:

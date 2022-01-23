@@ -1,4 +1,4 @@
-from dbi import DatabaseInterface
+from app.dbi import DatabaseInterface
 from typing import Dict, Tuple
 
 
@@ -31,9 +31,9 @@ class PhoneBookSystem:
 
     def read_contact(self, data: dict) -> Tuple[bool, str, Dict[str, str]]:
         print("Viewing contact information")
-        phone = data["phone"]
+        location = data["phone"]
 
-        read, reason, output = self.db.read(phone)
+        read, reason, output = self.db.read(location)
         if not read:
             reason = "failed to read contact"
             print(reason)

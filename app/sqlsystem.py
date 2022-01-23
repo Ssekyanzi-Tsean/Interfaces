@@ -1,9 +1,9 @@
 
 from sqlalchemy.orm import session
 from sqlalchemy.sql.expression import select
-from dbi import DatabaseInterface
+from app.dbi import DatabaseInterface
 from typing import Dict, Tuple
-from sqldb import SqlDb
+from app.sqldb import SqlDb
 import json
 from sqlalchemy.sql import text
 from sqlalchemy import create_engine, engine, update

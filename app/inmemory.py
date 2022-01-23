@@ -1,4 +1,4 @@
-from dbi import DatabaseInterface
+from app.dbi import DatabaseInterface
 from typing import Dict, Tuple
 
 
